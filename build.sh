@@ -28,7 +28,8 @@ echo "Building bootloader using config: '$config'"
 shift
 
 if [ -z $CROSS_COMPILE ]; then
-	CROSS_COMPILE="../buildroot/output/host/usr/bin/arm-linux-"
+	# path to the toolchain. Do not use WaveOS5 toolchain, compile one with buildroot.
+	CROSS_COMPILE="/home/larbi/mainline/buildroot/output/host/usr/bin/arm-linux-"
 fi
 CROSS_COMPILE=$(realpath $CROSS_COMPILE)
 
