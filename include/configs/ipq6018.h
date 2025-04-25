@@ -320,9 +320,9 @@ extern loff_t board_env_size;
 #define CONFIG_CMD_DHCP
 #define CONFIG_MII
 #define CONFIG_CMD_MII
-#define CONFIG_IPADDR		192.168.2.100
+#define CONFIG_IPADDR		192.168.1.15
 #define CONFIG_NETMASK		255.255.255.0
-#define CONFIG_SERVERIP		192.168.2.254
+#define CONFIG_SERVERIP		192.168.1.21
 #define CONFIG_CMD_TFTPPUT
 #define CONFIG_IPQ_MDIO			1
 #define CONFIG_IPQ_ETH_INIT_DEFER
@@ -372,7 +372,7 @@ extern loff_t board_env_size;
 
 #define CONFIG_CARABOOT_RELEASE "v5.1"
 
-#define CONFIG_EXTRA_ENV_SETTINGS								\
+/*#define CONFIG_EXTRA_ENV_SETTINGS								\
 	"bootcmd=run bootlinux\0"								\
 	"bootlinux=run boot1 boot2 boot3 || reset\0"						\
 	"do_recovery=run rec1 rec2 rec3 rec4; reset\0"						\
@@ -383,6 +383,33 @@ extern loff_t board_env_size;
 	"rec2=tftpboot ${tftp_loadaddr} ${recovery_file}\0"					\
 	"rec3=sf probe && sf erase 0x4e0000 0x1b20000\0"					\
 	"rec4=sf write ${fileaddr} 0x4e0000 ${filesize}\0"					\
+	"tftp_loadaddr=0x41000000\0"								\
+	"recovery_file=fwupdate.bin\0"
+*/
+
+#define CONFIG_EXTRA_ENV_SETTINGS								\
+	"active=_active\0"											\
+	"bootcount=3\0"											\
+	"bootdelay=3\0"											\
+	"loadaddr=0x51000000\0"											\
+	"mtddevname=ubi${active}\0"											\
+	"mtddevnum=0\0"											\
+	"mtdids=nand0=nand0\0"											\
+	"mtdparts=mtdparts=nand0:115M(ubi_active),115M(ubi_recover)\0"											\
+	"nand_erasesize=131072\0"											\
+	"nand_oob=80\0"											\
+	"nand_writesize=2048\0"											\
+	"partion=nand0,0\0"											\
+	"setup=setenv bootargs ${args_common} ubi.mtd=ubi${active} root=ubi0:rootfs rootfstype=ubifs\0"											\
+	"bootcmd=run setup boot1 boot2 boot3 || reset\0"						\
+	"do_recovery=run rec1 rec2 rec3 rec4; reset\0"						\
+	"boot1=echo booting from partion ${active}\0"					\
+	"boot2=nand device 0 && ubi part ubi${active}\0"					\
+	"boot3=ubi readvol ${loadaddr} kernel && bootm\0"					\
+	"rec1=setenv active 1; bootcount reset; saveenv\0"							\
+	"rec2=sleep 5 && tftpboot ${tftp_loadaddr} ${recovery_file}\0"					\
+	"rec3=nand erase.part ubi_active; nand write ${fileaddr} ubi_active ${filesize}\0"					\
+	"rec4=nand erase.part ubi_recover; nand write ${fileaddr} ubi_recover ${filesize}\0"					\
 	"tftp_loadaddr=0x41000000\0"								\
 	"recovery_file=fwupdate.bin\0"
 
