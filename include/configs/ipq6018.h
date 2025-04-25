@@ -395,21 +395,26 @@ extern loff_t board_env_size;
 	"mtddevname=ubi${active}\0"											\
 	"mtddevnum=0\0"											\
 	"mtdids=nand0=nand0\0"											\
-	"mtdparts=mtdparts=nand0:115M(ubi_active),115M(ubi_recover)\0"											\
+	"mtdparts=mtdparts=nand0:115M(ubi_active),115M(ubi_recovery)\0"											\
 	"nand_erasesize=131072\0"											\
 	"nand_oob=80\0"											\
 	"nand_writesize=2048\0"											\
 	"partion=nand0,0\0"											\
-	"setup=setenv bootargs ${args_common} ubi.mtd=ubi${active} root=ubi0:rootfs rootfstype=ubifs\0"											\
+	"change1=test -z ${switched} || test ${switched} -eq 0\0"											\
+	"change2=if test ${active} = _active ; then setenv active _recovery; else setenv active _active; fi \0"\
+	"change3=echo Active partition switched to [${active}]; bootcount reset; setenv switched 1; saveenv; reset \0"\
+	"do_switch_bootpart=run change1 change2 change3 \0"											\
+	"setup=setenv bootargs ${args_common} ubi.mtd=ubi${active} root=ubi0:rootfs rootfstype=ubifs\0"\
 	"bootcmd=run setup boot1 boot2 boot3 || reset\0"						\
+	"altbootcmd=run do_switch_bootpart || run do_recovery\0" \
 	"do_recovery=run rec1 rec2 rec3 rec4; reset\0"						\
 	"boot1=echo booting from partion ${active}\0"					\
 	"boot2=nand device 0 && ubi part ubi${active}\0"					\
 	"boot3=ubi readvol ${loadaddr} kernel && bootm\0"					\
-	"rec1=setenv active 1; bootcount reset; saveenv\0"							\
+	"rec1=setenv active _active; setenv switched; bootcount reset; saveenv\0"							\
 	"rec2=sleep 5 && tftpboot ${tftp_loadaddr} ${recovery_file}\0"					\
 	"rec3=nand erase.part ubi_active; nand write ${fileaddr} ubi_active ${filesize}\0"					\
-	"rec4=nand erase.part ubi_recover; nand write ${fileaddr} ubi_recover ${filesize}\0"					\
+	"rec4=nand erase.part ubi_recovery; nand write ${fileaddr} ubi_recovery ${filesize}\0"					\
 	"tftp_loadaddr=0x41000000\0"								\
 	"recovery_file=fwupdate.bin\0"
 
