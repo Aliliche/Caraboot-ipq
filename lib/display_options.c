@@ -21,9 +21,9 @@ int display_options (void)
 	printf ("\n\n%s\n\n", version_string);
 #endif
 	printf("=====================================\n"
-	       "Caraboot "CONFIG_CARABOOT_RELEASE" (IPQ60xx) U-boot\n"
-	       "http://www.8devices.com/\n"
-	       "-------------------------------------\n");
+	       "Caraboot ACK "CONFIG_CARABOOT_RELEASE" (IPQ60xx) U-boot\n"
+	       "http://www.acksys.fr/\n"
+	       "-------- First Release --------------\n");
 	return 0;
 }
 
