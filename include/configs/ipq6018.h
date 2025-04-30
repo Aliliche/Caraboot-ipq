@@ -369,6 +369,8 @@ extern loff_t board_env_size;
 #define CONFIG_IPQ_TZT
 #define CONFIG_IPQ_FDT_FIXUP
 #define CONFIG_QCOM_WATCHDOG
+#define CONFIG_BOOTCOUNT_LIMIT
+#define CONFIG_BOOTCOUNT_ENV
 
 #define CONFIG_CARABOOT_RELEASE "v5.1"
 
@@ -389,8 +391,8 @@ extern loff_t board_env_size;
 
 #define CONFIG_EXTRA_ENV_SETTINGS								\
 	"active=_active\0"											\
-	"bootcount=3\0"											\
 	"bootdelay=3\0"											\
+	"upgrade_available=1\0"\
 	"loadaddr=0x51000000\0"											\
 	"mtddevname=ubi${active}\0"											\
 	"mtddevnum=0\0"											\
